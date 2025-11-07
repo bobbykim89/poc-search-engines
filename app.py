@@ -129,10 +129,10 @@ with col1:
 with col2:
     query = st.text_input("Enter your search query:", placeholder="i.e. computer science")
 
-
+search_button = st.button("Search", type="primary")
 
 # search btn
-if st.button("Search", type="primary") or query:
+if search_button or query:
     if query:
         with st.spinner(f"Searching with {engine}..."):
             try:
