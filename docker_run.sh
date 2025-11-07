@@ -12,6 +12,33 @@ fi
 
 echo "Using: $DC"
 echo ""
+
+# Check and stop existing containers
+echo "Checking for existing containers..."
+echo "================================="
+
+if [ "$(docker ps -aq -f name=qdrant)" ]; then
+    echo "Stopping and removing existing Qdrant container..."
+    docker stop qdrant 2>/dev/null
+    docker rm qdrant 2>/dev/null
+    echo "✓ Removed existing Qdrant container"
+fi
+
+if [ "$(docker ps -aq -f name=elasticsearch)" ]; then
+    echo "Stopping and removing existing Elasticsearch container..."
+    docker stop elasticsearch 2>/dev/null
+    docker rm elasticsearch 2>/dev/null
+    echo "✓ Removed existing Elasticsearch container"
+fi
+
+if [ "$(docker ps -aq -f name=typesense)" ]; then
+    echo "Stopping and removing existing Typesense container..."
+    docker stop typesense 2>/dev/null
+    docker rm typesense 2>/dev/null
+    echo "✓ Removed existing Typesense container"
+fi
+
+echo ""
 echo "Starting Vector Search Engines..."
 echo "================================="
 
