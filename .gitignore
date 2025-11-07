@@ -28,3 +28,8 @@ htmlcov/
 
 # Docker
 docker-compose.override.yml
+
+# Search engine data
+es_data
+qdrant_storage
+typesense_data
