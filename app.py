@@ -118,16 +118,18 @@ st.title("Vector Search Engine Demo")
 st.markdown("Compare search results across Qdrant, Elasticsearch, and Typesense")
 
 # Search configuration
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([1, 2])
 
 with col1:
-    query = st.text_input("Enter your search query:", placeholder="i.e. computer science")
-
-with col2:
     engine = st.selectbox(
         "Select Search Engine:",
         ["Qdrant", "Elasticsearch", "Typesense"]
     )
+
+with col2:
+    query = st.text_input("Enter your search query:", placeholder="i.e. computer science")
+
+
 
 # search btn
 if st.button("Search", type="primary") or query:
@@ -151,7 +153,7 @@ if st.button("Search", type="primary") or query:
                             col1, col2 = st.columns([1, 4])
 
                             with col1:
-                                st.image(result["image"], width=150)
+                                st.image(result["image"])
                             
                             with col2:
                                 program_url = 'https://asuonline.asu.edu' + result['url']
