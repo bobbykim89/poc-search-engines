@@ -1,7 +1,6 @@
 import os
 from openai import OpenAI
 from qdrant_client import QdrantClient, models
-from qdrant_client.models import Distance, VectorParams, PointStruct
 from elasticsearch import Elasticsearch
 from typesense import Client as TypesenseClient
 import json
@@ -63,6 +62,7 @@ def setup_qdrant(data_with_embeddings):
             payload={
                 "title": item["title"],
                 "url": item["detailPage"],
+                "shortDescription": item["shortDescription"],
                 "description": item["longDescription"],
                 "image": item["degreeImage"]
             }
@@ -87,6 +87,7 @@ def setup_elasticsearch(data_with_embedding):
         "mappings": {
             "properties": {
                 "title": {"type": "text"},
+                "shortDescription": {"type": "text"},
                 "description": {"type": "text"},
                 "image": {"type": "keyword"},
                 "url": {"type": "keyword"},
@@ -107,6 +108,7 @@ def setup_elasticsearch(data_with_embedding):
         doc = {
             "title": item["title"],
             "url": item["detailPage"],
+            "shortDescription": item["shortDescription"],
             "description": item["longDescription"],
             "image": item["degreeImage"],
             "embedding": item["embedding"]
@@ -133,6 +135,7 @@ def setup_typesense(data_with_embedding):
         "name": COLLECTION_NAME,
         "fields": [
             {"name": "title", "type": "string"},
+            {"name": "shortDescription", "type": "string"},
             {"name": "description", "type": "string"},
             {"name": "image", "type": "string"},
             {"name": "url", "type": "string"},
@@ -147,6 +150,7 @@ def setup_typesense(data_with_embedding):
             "id": str(uuid.uuid4().hex),
             "title": item["title"],
             "url": item["detailPage"],
+            "shortDescription": item["shortDescription"],
             "description": item["longDescription"],
             "image": item["degreeImage"],
             "embedding": item["embedding"]
@@ -160,26 +164,26 @@ if __name__ == "__main__":
     print("=" * 50)
 
     # Generate embeddings once for all data
-    # print("\nGenerating embeddings for all documents...")
-    # with open("./assets/programs.json", "r") as file:
-    #     program_data: list = json.load(file)
+    print("\nGenerating embeddings for all documents...")
+    with open("./assets/programs.json", "r") as file:
+        program_data: list = json.load(file)
     
-    # data_with_embeddings = []
-    # for item in program_data:
-    #     print(f"  Embedding: {item['title']}")
-    #     embedding = get_embedding(item["longDescription"])
-    #     data_with_embeddings.append({
-    #         **item,
-    #         "embedding": embedding
-    #     })
-    # print(f"✓ Generated {len(data_with_embeddings)} embeddings")
-    # with open("./assets/programs_with_embeddings.json", "w") as file:
-    #     json.dump(data_with_embeddings, file, indent=2, ensure_ascii=False)
-    # print("Saved to json file.")
+    data_with_embeddings = []
+    for item in program_data:
+        print(f"  Embedding: {item['title']}")
+        embedding = get_embedding(item["longDescription"])
+        data_with_embeddings.append({
+            **item,
+            "embedding": embedding
+        })
+    print(f"✓ Generated {len(data_with_embeddings)} embeddings")
+    with open("./assets/programs_with_embeddings.json", "w") as file:
+        json.dump(data_with_embeddings, file, indent=2, ensure_ascii=False)
+    print("Saved to json file.")
 
     # in case of using saved json file
-    with open("./assets/programs_with_embeddings.json", "r") as file:
-        data_with_embeddings = json.load(file)
+    # with open("./assets/programs_with_embeddings.json", "r") as file:
+    #     data_with_embeddings = json.load(file)
     
     print("\nSetting up Qdrant...")
     setup_qdrant(data_with_embeddings=data_with_embeddings)
